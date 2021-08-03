@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import os,datetime
+import os, datetime
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 NTC_TEMPLATES_DIR = os.path.join(BASE_DIR, 'textfsm_templates')
@@ -28,8 +29,7 @@ SECRET_KEY = 'django-insecure-889(bq5hlpp0=(lm$0qinrac=8k(xu^c&y93l7)mpa@$3t2$6%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "3m7653694r.qicp.vip"]
 
 # Application definition
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
     'rest_framework',
+    'django_celery_beat',  # 安装 django_celery_beat
     'django_filters',
 ]
 
@@ -76,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NetOpsAPI.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -88,25 +88,8 @@ DATABASES = {
         'NAME': 'NetOpsAPI',
         'USER': 'root',
         'PASSWORD': '123456'
-    }, 'NetOpsBase': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'NetOpsBase',
-        'USER': 'root',
-        'PASSWORD': '123456'
-    }
+    },
 }
-DATABASE_ROUTERS = ['NetOpsAPI.database_router.DatabaseAppsRouter']  # 数据库路由
-DATABASE_APPS_MAPPING = {
-    'admin': 'NetOpsBase',
-    'auth': 'NetOpsBase',
-    'contenttypes': 'NetOpsBase',
-    'sessions': 'NetOpsBase',
-    'django': 'NetOpsBase',
-    'app': 'default',
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -133,7 +116,6 @@ initConfig = {
     "NTC_TEMPLATES_DIR": NTC_TEMPLATES_DIR,
     "NetOpsAssetsUrl": "http://127.0.0.1:7001",  # 资产项目请求地址
 }
-
 
 LANGUAGE_CODE = 'zh-hans'  # 设置为中文
 TIME_ZONE = 'Asia/Shanghai'  # 设置时区
@@ -164,6 +146,22 @@ FILE_UPLOAD_HANDLERS = (
     "django_excel.TemporaryExcelFileUploadHandler",
 )
 
+# redis配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100}
+            # "PASSWORD": "密码",
+        }
+    }
+}
+REDIS_TIMEOUT = 7 * 24 * 60 * 60
+CUBES_REDIS_TIMEOUT = 60 * 60
+NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
+
 # REST_FRAMEWORK JWT 验证
 REST_FRAMEWORK = {
     # 设置所有接口都需要被验证
@@ -172,8 +170,8 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.AllowAny',
     ),
     # 分页配置
-    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    #'PAGE_SIZE': 10,
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 10,
     # 配置导出excel
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -246,4 +244,3 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
     'JWT_AUTH_COOKIE': None,
 }
-

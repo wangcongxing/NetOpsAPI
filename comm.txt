@@ -13,14 +13,14 @@ python manage.py migrate
 python manage.py createsuperuser
 
 测试环境
-PUBTYPE=app ENV=test python3 manage.py makemigrations --settings=NetOpsNornir.test_settings
-PUBTYPE=app ENV=test python3 manage.py migrate --settings=NetOpsNornir.test_settings
+PUBTYPE=app ENV=test python3 manage.py makemigrations --settings=NetOpsAPI.test_settings
+PUBTYPE=app ENV=test python3 manage.py migrate --settings=NetOpsAPI.test_settings
 
 生产环境
-ENV=pro python3 manage.py makemigrations --settings=NetOpsNornir.pro_settings
-ENV=pro python3 manage.py migrate --settings=NetOpsNornir.prd_settings
-ENV=pro python3 manage.py runserver 0.0.0.0:8000 --settings=NetOpsNornir.pro_settings
-ENV=pro python3 manage.py createsuperuser --settings=NetOpsNornir.pro_settings
+ENV=pro python3 manage.py makemigrations --settings=NetOpsAPI.pro_settings
+ENV=pro python3 manage.py migrate --settings=NetOpsAPI.prd_settings
+ENV=pro python3 manage.py runserver 0.0.0.0:8000 --settings=NetOpsAPI.pro_settings
+ENV=pro python3 manage.py createsuperuser --settings=NetOpsAPI.pro_settings
 #下载所有静态资源文件到项目的static目录中python manage.py collectstatic
 
 新建app
@@ -56,7 +56,7 @@ docker run --detach --name gitlab --restart always --publish 40001:22 --publish 
 
 测试环境启动
 
-PUBTYPE=app ENV=test python3 manage.py runserver 0.0.0.0:5002 --settings=NetOpsNornir.test_settings
+PUBTYPE=app ENV=test python3 manage.py runserver 0.0.0.0:5002 --settings=NetOpsAPI.test_settings
 
 
 docker run --name nginxuwsgi -p 9000:80 -v /Users/congxingwang/pythoncode/djangoProject:/bankapp/ /Users/congxingwang/Desktop/docker/nginx:/etc/nginx/ -d nginxuwsgi

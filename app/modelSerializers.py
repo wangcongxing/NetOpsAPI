@@ -29,50 +29,21 @@ class deviceTypesSerializer(serializers.ModelSerializer):
         # depth = 1
 
 
-# 登录用户
-class loginUserInfoSerializer(serializers.ModelSerializer):
-    createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
-    lastTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
-
-    def create(self, validated_data):
-        password = validated_data["password"]
-        validated_data.update({"password": str(rsaUtil.encrypt_by_public_key(password), 'utf-8')})
-        loginuserinfo = super().create(validated_data)
-        return loginuserinfo
-
-    def update(self, instance, validated_data):
-        password = validated_data["password"]
-        validated_data.update({"password": str(rsaUtil.encrypt_by_public_key(password), 'utf-8')})
-        loginuserinfo = super().update(instance, validated_data)
-        return loginuserinfo
-
-    class Meta:
-        model = models.loginUserInfo
-        fields = ["id", "username", "password", "userstate",
-                  "createTime", "lastTime", "creator", "editor"]
-        depth = 1
-
-
-
-
-
-
-
-
 # 网络服务API管理
 class networkOpenAPISerializer(serializers.ModelSerializer):
     createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
     lastTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
 
     def create(self, validated_data):
-        password = validated_data["phone"]
-        validated_data.update({"phone": str(rsaUtil.encrypt_by_public_key(password), 'utf-8')})
+        password = validated_data.get("phone", "")
+        if password != "":
+            validated_data.update({"phone": str(rsaUtil.encrypt_by_public_key(password), 'utf-8')})
         loginuserinfo = super().create(validated_data)
         return loginuserinfo
 
     class Meta:
         model = models.networkOpenAPI
-        fields = ["id", "title", "redirectUrl", "ipwhitelist", "phone", "email",
+        fields = ["id", "getAppid", "title", "redirectUrl", "ipwhitelist", "phone", "email",
                   "desc",
                   "enabled",
                   "createTime", "lastTime", "creator", "editor"]
@@ -83,9 +54,22 @@ class networkOpenTempSerializer(serializers.ModelSerializer):
     createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
     lastTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
 
+    def create(self, validated_data):
+        validated_data.update({"networkopenapi_id": int(self.initial_data["nid"])})
+        validated_data.update({"deviceType_id": int(self.initial_data["tid"])})
+
+        tempTask = super().create(validated_data)
+        return tempTask
+
+    def update(self, instance, validated_data):
+        validated_data.update({"networkopenapi_id": int(self.initial_data["nid"])})
+        validated_data.update({"deviceType_id": int(self.initial_data["tid"])})
+        tempTask = super().update(instance, validated_data)
+        return tempTask
+
     class Meta:
         model = models.networkOpenTemp
-        fields = ["id", "title", "cmds", "desc", "useCount", "createTime",
+        fields = ["id", "title", "cmds", "TextFSMTemplate", "desc", "useCount", "createTime",
                   "lastTime", "creator",
                   "editor"]
 
@@ -98,15 +82,27 @@ class networkOpenAPIListSerializer(serializers.ModelSerializer):
     executionInfo = serializers.SerializerMethodField()
 
     def get_executionInfo(self, obj):
+        if obj.networkopenapi is None:
+            return []
         cmds = obj.netmaintain.cmds
         networkopenapilistkwargs = models.networkOpenAPIListKwargs.objects.filter(netmaintainIpList=obj)
-        for cmdInfo in netmaintainiplistkwargs:
+        for cmdInfo in networkopenapilistkwargs:
             cmds = str(cmds).replace(cmdInfo.key, cmdInfo.value)
-        cmds = str(cmds).replace("\n", ",").replace(";", ",").split(",")  # 根据回撤逗号分割
+        cmds = str(cmds).replace("\n", ",").replace("；", ",").replace(";", ",").split(",")  # 根据回撤逗号分割
 
         return cmds
 
     class Meta:
         model = models.networkOpenAPIList
         fields = ["id", "ip", "executionInfo", "resultText", "cmdInfo", "exceptionInfo",
+                  "createTime", "lastTime", "creator", "editor"]
+
+
+class useInfoAPISerializer(serializers.ModelSerializer):
+    createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+    lastTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+
+    class Meta:
+        model = models.useInfoAPI
+        fields = ["id", "taskNumber",
                   "createTime", "lastTime", "creator", "editor"]

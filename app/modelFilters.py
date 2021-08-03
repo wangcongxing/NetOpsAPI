@@ -3,15 +3,6 @@ import django_filters
 from app import models
 
 
-class loginUserInfoFilter(filters.FilterSet):
-    # 模糊过滤
-    username = django_filters.CharFilter(field_name="username", lookup_expr='icontains')
-
-    class Meta:
-        model = models.loginUserInfo
-        fields = ["username", ]
-
-
 class networkOpenAPIFilter(filters.FilterSet):
     # 模糊过滤
     deviceType = django_filters.CharFilter(field_name="deviceType", )
@@ -45,6 +36,7 @@ class networkOpenTempFilter(filters.FilterSet):
         model = models.networkOpenTemp
         fields = ['title', "desc", ]
 
+
 class networkOpenAPIListFilter(filters.FilterSet):
     # 模糊过滤
     netmaintain = django_filters.CharFilter(field_name="netmaintain", )
@@ -53,3 +45,12 @@ class networkOpenAPIListFilter(filters.FilterSet):
     class Meta:
         model = models.networkOpenAPIList
         fields = ["netmaintain", 'ip', ]
+
+
+class useInfoAPItFilter(filters.FilterSet):
+    # 模糊过滤
+    taskNumber = django_filters.CharFilter(field_name="taskNumber", lookup_expr='icontains')
+
+    class Meta:
+        model = models.useInfoAPI
+        fields = ["taskNumber", ]

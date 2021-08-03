@@ -5,7 +5,7 @@ from utils.APIResponseResult import get_parameter_dic
 
 class UserAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        request.data.update(request.query_params.dict())
+        #request.data.update(request.query_params.dict())
         dataDict = get_parameter_dic(request)
         print("request.data==================", request.data)
         if 'access_token' in dataDict:
