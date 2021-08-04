@@ -118,7 +118,8 @@ class InitInfo(APIView):
         # 新建调度任务
         # 调度任务
         # 创建10秒的间隔 interval 对象
-        schedule, created = IntervalSchedule.objects.update_or_create(
+        '''
+                schedule, created = IntervalSchedule.objects.update_or_create(
             defaults={'every': 10, 'period': IntervalSchedule.SECONDS}, id=1)
         # 无参函数定时任务
         PeriodicTask.objects.update_or_create(defaults={'interval': schedule, 'name': '无参函数定时任务',
@@ -131,6 +132,8 @@ class InitInfo(APIView):
                                                         'args': json.dumps([10, 20, 30]),
                                                         # 'expires': (datetime.now()+timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
                                                         }, name='有参函数定时任务')
+        '''
+
 
         # 创建系统自带模版
         # 根据设备类型key
