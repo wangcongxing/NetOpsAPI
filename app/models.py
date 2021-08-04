@@ -43,7 +43,7 @@ task_status_choices = (
 )
 approve_state_choices = (
     (0, "申请中"),
-    (2, "已批准"),
+    (1, "已批准"),
     (-1, "已驳回"),
 )
 device_state_choices = (

@@ -393,8 +393,8 @@ class useInfoAPIViewSet(CustomViewBase):
                           0:3]
         else:
             useinfoapis = models.useInfoAPI.objects.filter(taskNumber=nid, enabled=True, )
-            if useinfoapis is None:
-                return APIResponseResult.APIResponse(0, "任务不存在,请检查参数是否有误...", )
+            if useinfoapis is None or len(useinfoapis)==0:
+                return APIResponseResult.APIResponse(0, "任务不存在或任务状态为禁用...", )
             # 将当前任务对应的执行状态全部更新为待处理
             useinfoapis[0].networkopenapilist.all().update(taskStatus=0)
         runInfo = []

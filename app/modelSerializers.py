@@ -43,7 +43,7 @@ class networkOpenAPISerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.networkOpenAPI
-        fields = ["id", "getAppid", "title", "redirectUrl", "ipwhitelist", "phone", "email",
+        fields = ["id", "getAppid", "title", "callbackUrl", "ipwhitelist", "phone", "email",
                   "desc",
                   "enabled",
                   "createTime", "lastTime", "creator", "editor"]
